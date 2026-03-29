@@ -78,3 +78,82 @@ class CancerDataHelper():
 
         plt.tight_layout()
         plt.show()
+
+class TitanicDataHelper():
+    def load_dataset(one_hot=True, normalize=True):
+        titanic_data = pd.read_csv("./input/titanic_survival.csv")
+        titanic_data = titanic_data.drop(columns=["Name", "PassengerId", "Ticket", "Cabin"])
+
+        age_median = titanic_data["Age"].median()
+        titanic_data["Age"] = titanic_data["Age"].fillna(age_median)
+
+        embarked_mode = titanic_data["Embarked"].mode()[0]
+        titanic_data["Embarked"] = titanic_data["Embarked"].fillna(embarked_mode)
+
+        if (one_hot):
+            titanic_data = pd.get_dummies(titanic_data, columns=["Sex", "Embarked"], drop_first=True, dtype=int)
+        
+        x_train, x_test, y_train, y_test = split_train_test(titanic_data.drop("Survived", axis=1), titanic_data["Survived"])
+        
+        if (normalize):
+            x_train = z_score(x_train)
+            x_test = z_score(x_test)
+        
+        return x_train, x_test, y_train, y_test
+
+    def plot_outcome_distribution(x, y):
+        fig, ax = plt.subplots(1, 1, figsize=(8, 6))
+
+        survived_counts = y.value_counts()
+        labels = ["Died", "Survived"]
+        colors = ["#e74c3c", "#2ecc71"]
+
+        ax.pie(survived_counts.values, labels=labels, autopct="%1.1f%%", 
+            colors=colors, startangle=90, textprops={"fontsize": 12})
+        ax.set_title("Class Distribution in Training Data", fontsize=14, fontweight="bold")
+        plt.tight_layout()
+        plt.show()
+
+        print(f"Died: {survived_counts[0]} ({survived_counts[0]/len(y)*100:.1f}%)")
+        print(f"Survived: {survived_counts[1]} ({survived_counts[1]/len(y)*100:.1f}%)")
+        
+    def plot_correlation(x, y):
+        fig, ax = plt.subplots(figsize=(10, 8))
+
+        correlation_data = x.copy()
+    
+        if "Sex" in correlation_data.columns:
+            correlation_data = pd.get_dummies(correlation_data, columns=["Sex"], drop_first=True, dtype=int)
+        
+        if "Embarked" in correlation_data.columns:
+            correlation_data = pd.get_dummies(correlation_data, columns=["Embarked"], drop_first=True, dtype=int)
+        
+        correlation_data["Survived"] = y.values
+
+        correlation_matrix = correlation_data.corr()
+
+        sns.heatmap(correlation_matrix, annot=True, fmt=".2f", cmap="coolwarm", 
+                    center=0, square=True, ax=ax, cbar_kws={"label": "Correlation"})
+        ax.set_title("Feature Correlation Matrix", fontsize=14, fontweight="bold", pad=20)
+        plt.tight_layout()
+        plt.show()
+        
+    def plot_boxplots(x, y):
+        numeric_features = ["Age", "Fare", "SibSp", "Parch"]
+
+        fig, axes = plt.subplots(2, 2, figsize=(12, 10))
+        axes = axes.ravel()
+
+        viz_data = x.copy()
+        viz_data["Survived"] = y.values
+        viz_data["Outcome"] = viz_data["Survived"].map({1: "Survived", 0: "Died"})
+
+        for idx, feature in enumerate(numeric_features):
+            sns.boxplot(data=viz_data, x="Outcome", y=feature, ax=axes[idx], 
+                        palette=["#2ecc71", "#e74c3c"])
+            axes[idx].set_title(f"{feature} Distribution by Outcome", fontsize=12, fontweight="bold")
+            axes[idx].set_xlabel("Outcome", fontsize=11)
+            axes[idx].set_ylabel(feature, fontsize=11)
+
+        plt.tight_layout()
+        plt.show()
