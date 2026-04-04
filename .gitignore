@@ -1,1 +1,3 @@
 *.pyc
+classification_results.csv
+result_plotter.ipynb

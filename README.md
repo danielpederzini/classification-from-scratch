@@ -113,44 +113,15 @@ For SVM on the Two Moons dataset, support vectors were highlighted in the decisi
 ## Results Summary
 This project highlights how different algorithms behave under different assumptions:
 
-* Linear models work best when the boundary is simple
+* Linear models work best when the boundary is linear, but struggle with nonlinear data
+* Logistic Regression performs better when multicollinearity is treated
 * Tree-based models handle nonlinear interactions well
+* Random Forest can improve stability but can be outperformed by a decision tree on small datasets due to averaging
 * KNN can model complex shapes but may be sensitive to local noise
-* Naive Bayes is simple and fast, but its assumptions can limit performance
-* ANN and SVM can model more complex patterns, depending on tuning and preprocessing
+* Naive Bayes is simple and fast, but its assumptions of feature independence can limit performance
+* ANN and SVM can model more complex patterns, depending on dataset size, tuning and preprocessing
 
-#### Cancer Dataset Results
-| Model               | F1 Score      | ROC AUC      | PR AUC         |
-| ------------------- | ------------: | -----------: | -------------: |
-| Naive Bayes         |        0.8989 |       0.9794 |         0.9758 |
-| KNN                 |        0.9070 |       0.9149 |         0.9500 |
-| Decision Tree       |        0.9451 |       0.9500 |         0.9623 |
-| Random Forest       |        0.9565 |       0.9809 |         0.9816 |
-| Logistic Regression |        0.9348 |       0.9816 |         0.9745 |
-| ANN                 |        0.9670 |       0.9924 |         0.9905 |
-| SVM                 |        0.9556 |       0.9574 |         0.9750 |
-
-#### Two Moons Dataset Results
-| Model               | F1 Score      | ROC AUC      | PR AUC         |
-| ------------------- | ------------: | -----------: | -------------: |
-| Naive Bayes         |        0.8564 |       0.9456 |         0.9440 |
-| KNN                 |        0.9657 |       0.9653 |         0.9770 |
-| Decision Tree       |        0.9173 |       0.9677 |         0.9697 |
-| Random Forest       |        0.9637 |       0.9900 |         0.9905 |
-| Logistic Regression |        0.8550 |       0.9457 |         0.9431 |
-| ANN                 |        0.9633 |       0.9895 |         0.9862 |
-| SVM                 |        0.9685 |       0.9674 |         0.9760 |
-
-#### Titanic Dataset Results
-| Model               | F1 Score      | ROC AUC      | PR AUC         |
-| ------------------- | ------------: | -----------: | -------------: |
-| Naive Bayes         |        0.7328 |       0.8601 |         0.7906 |
-| KNN                 |        0.6885 |       0.7573 |         0.7557 |
-| Decision Tree       |        0.7717 |       0.8897 |         0.8549 |
-| Random Forest       |        0.7642 |       0.8910 |         0.8594 |
-| Logistic Regression |        0.7368 |       0.8684 |         0.8010 |
-| ANN                 |        0.7333 |       0.8657 |         0.8159 |
-| SVM                 |        0.7520 |       0.8045 |         0.8035 |
+![Model Comparison Summary](images/model_comparison.png)
 
 ### Usage
 1. Clone the repository
