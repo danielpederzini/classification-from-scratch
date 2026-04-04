@@ -18,12 +18,23 @@ def z_score(x):
     return (x - x.mean()) / x.std(ddof=1)
 
 class CancerDataHelper():
-    def load_dataset(one_hot=True, normalize=True):
+    def load_dataset(one_hot=True, normalize=True, treat_multicol= False):
         cancer_data = pd.read_csv("./input/breast_cancer.csv")
         cancer_data = cancer_data.drop(columns=["id"])
         
         if (one_hot):
             cancer_data = pd.get_dummies(cancer_data, columns=["diagnosis"], drop_first=True, dtype=int)
+        
+        if (treat_multicol):
+            correlation_matrix = cancer_data.corr()
+            correlation_pairs = correlation_matrix.abs().unstack().sort_values(ascending=False)
+            correlation_pairs = correlation_pairs[correlation_pairs < 1.0]
+            high_corr_pairs = correlation_pairs[correlation_pairs > 0.9]
+            columns_to_drop = cancer_data.columns[cancer_data.columns.isin(high_corr_pairs.index.get_level_values(0))]
+            cancer_data = cancer_data.drop(columns=columns_to_drop)
+            
+            print("Dropped highly correlated feature pairs (|corr| > 0.9):")
+            print(high_corr_pairs)
         
         x_train, x_test, y_train, y_test = split_train_test(cancer_data.drop("diagnosis_M", axis=1), cancer_data["diagnosis_M"])
         
